@@ -1,0 +1,22 @@
+---
+
+- name: Install epel repository
+  yum:
+    name:   "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
+    state:  present
+
+- name: Install erlang
+  yum:
+    name:   erlang
+    state:  present
+  
+- name: Download and install rabbitmq public signing key
+  rpm_key:
+    key:    "{{ rabbitmq_signing_key_url }}"
+    state:  present
+
+- name: Install rabbitmq-server from rabbitmq remote repository
+  yum:
+    name:   "{{ rabbitmq_yum_repo_baseurl }}/rabbitmq-server-{{ rabbitmq_version }}.noarch.rpm"
+    update_cache: yes
+    state:  present

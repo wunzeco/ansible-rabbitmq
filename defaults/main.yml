@@ -1,0 +1,74 @@
+---
+rabbitmq_user:  rabbitmq
+rabbitmq_group: "{{ rabbitmq_user }}"
+
+
+#############
+## Package
+rabbitmq_version:           '3.6.3-1'
+rabbitmq_signing_key_url:   "https://www.rabbitmq.com/rabbitmq-release-signing-key.asc"
+rabbitmq_apt_repo:          "deb http://www.rabbitmq.com/debian/ testing main"
+rabbitmq_yum_repo_baseurl:  "http://www.rabbitmq.com/releases/rabbitmq-server/v{{ rabbitmq_version.split('-')[0] }}"
+
+#################
+## Configuration
+
+rabbitmq_log_dir:      /var/log/rabbitmq
+rabbitmq_home_dir:     /var/lib/rabbitmq
+rabbitmq_conf_dir:     /etc/rabbitmq
+rabbitmq_plugins_dir:  "/usr/lib/rabbitmq/lib/rabbitmq_server-{{ rabbitmq_version.split('-')[0] }}/plugins"
+rabbitmq_conf_file:    "{{ rabbitmq_conf_dir }}/rabbitmq.config"
+
+rabbitmq_max_open_files: 16384
+
+rabbitmq_admin_enable:                  true
+rabbitmq_management_port:               15672
+rabbitmq_management_ssl:                true
+
+rabbitmq_cluster_node_type:             'disc'
+rabbitmq_cluster_nodes:                 []
+rabbitmq_config_cluster:                false
+rabbitmq_config_stomp:                  false
+rabbitmq_config_shovel:                 false
+rabbitmq_config_shovel_statics:         {}
+rabbitmq_default_user:                  'guest'
+rabbitmq_default_pass:                  'guest'
+rabbitmq_delete_guest_user:             false
+rabbitmq_erlang_cookie:                 
+rabbitmq_interface:                     
+rabbitmq_node_ip_address:               
+rabbitmq_port:                          '5672'
+rabbitmq_tcp_keepalive:                 false
+rabbitmq_heartbeat:                               # e.g. 60
+rabbitmq_ssl:                           false
+rabbitmq_ssl_only:                      false
+rabbitmq_ssl_cacert:                    
+rabbitmq_ssl_cert:                      
+rabbitmq_ssl_key:                       
+rabbitmq_ssl_port:                      '5671'
+rabbitmq_ssl_interface:                 
+rabbitmq_ssl_management_port:           '15671'
+rabbitmq_ssl_stomp_port:                '6164'
+rabbitmq_ssl_verify:                    'verify_none'
+rabbitmq_ssl_fail_if_no_peer_cert:      false
+rabbitmq_ssl_versions:                          # e.g. ['tlsv1.2', 'tlsv1.1']
+rabbitmq_ssl_ciphers:                   []
+rabbitmq_stomp_ensure:                  false
+rabbitmq_ldap_auth:                     false
+rabbitmq_ldap_server:                   'ldap'
+rabbitmq_ldap_user_dn_pattern:          'cn=username,ou=People,dc=example,dc=com'
+rabbitmq_ldap_other_bind:               'anon'
+rabbitmq_ldap_use_ssl:                  false
+rabbitmq_ldap_port:                     '389'
+rabbitmq_ldap_log:                      false
+rabbitmq_ldap_config_variables:         {}
+rabbitmq_stomp_port:                    '6163'
+rabbitmq_stomp_ssl_only:                false
+rabbitmq_wipe_db_on_cookie_change:      false
+rabbitmq_cluster_partition_handling:    'ignore'
+rabbitmq_environment_variables:         {}
+rabbitmq_config_variables:              {}
+rabbitmq_config_kernel_variables:       {}
+rabbitmq_config_management_variables:   {}
+rabbitmq_config_additional_variables:   {}
+rabbitmq_auth_backends:                               # e.g. [rabbit_auth_backend_internal]

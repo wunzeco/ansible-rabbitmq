@@ -1,0 +1,7 @@
+[default]
+{% if rabbitmq_ssl and rabbitmq_management_ssl %}
+ssl = True
+port = {{ rabbitmq_ssl_management_port }}
+{% else %}
+port = {{ rabbitmq_management_port }}
+{% endif %}

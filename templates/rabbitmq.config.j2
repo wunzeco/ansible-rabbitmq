@@ -1,0 +1,177 @@
+% This file managed by Ansible
+[
+{% if rabbitmq_ssl and rabbitmq_ssl_versions %}
+  {ssl, [{versions, ['{{ rabbitmq_ssl_versions|join("', '") }}']}]},
+{% endif %}
+  {rabbit, [
+{% if rabbitmq_heartbeat %}
+    {heartbeat, {{ rabbitmq_heartbeat -}} },
+{% endif %}
+{% if rabbitmq_auth_backends %}
+    {auth_backends, [{{ rabbitmq_auth_backends|join(', ') }}]},
+{% elif rabbitmq_ldap_auth %}
+    {auth_backends, [rabbit_auth_backend_internal, rabbit_auth_backend_ldap]},
+{% endif %}
+{% if rabbitmq_config_cluster %}
+    {cluster_nodes, {[rabbit@{{ rabbitmq_cluster_nodes|join(', rabbit@') }}], {{ rabbitmq_cluster_node_type -}} }},
+    {cluster_partition_handling, {{ rabbitmq_cluster_partition_handling -}} },
+{% endif %}
+    {tcp_listen_options,
+         [binary,
+         {% if rabbitmq_tcp_keepalive -%}
+         {keepalive,     true},
+         {% endif -%}
+         {packet,        raw},
+         {reuseaddr,     true},
+         {backlog,       128},
+         {nodelay,       true},
+         {exit_on_close, false}]
+    },
+{% if rabbitmq_ssl_only %}
+    {tcp_listeners, []},
+{% elif rabbitmq_interface|default(false) %}
+    {tcp_listeners, [{"{{ rabbitmq_interface }}", {{ rabbitmq_port -}} }]},
+{% endif %}
+{% if rabbitmq_ssl %}
+  {% if rabbitmq_ssl_interface|default(false) %}
+    {ssl_listeners, [{"{{ rabbitmq_ssl_interface }}", {{ rabbitmq_ssl_port -}} }]},
+  {% else %}
+    {ssl_listeners, [{{ rabbitmq_ssl_port }}]},
+  {% endif %}
+    {ssl_options, [
+                   {% if rabbitmq_ssl_cacert|default(false) -%}
+                   {cacertfile,"{{ rabbitmq_ssl_cacert }}"},
+                   {% endif -%}
+                   {certfile,"{{ rabbitmq_ssl_cert }}"},
+                   {keyfile,"{{ rabbitmq_ssl_key }}"},
+                   {verify,{{ rabbitmq_ssl_verify -}} },
+                   {fail_if_no_peer_cert,{{ rabbitmq_ssl_fail_if_no_peer_cert -}} }
+                   {%- if rabbitmq_ssl_versions -%}
+                   ,
+                   {versions, ['{{ rabbitmq_ssl_versions|join("', '") }}']}
+                   {%- endif -%}
+                   {%- if rabbitmq_ssl_ciphers -%}
+                   ,
+                   {ciphers,[
+                     { {{- rabbitmq_ssl_ciphers|join("},\n                     {") -}} }
+                   ]}
+                   {% endif -%}
+                  ]},
+{% endif %}
+{% if rabbitmq_config_variables %}
+{% for key,value in rabbitmq_config_variables|dictsort %}
+    { {{- key }}, {{ value -}} },
+{% endfor %}
+{% endif %}
+    {default_user, <<"{{ rabbitmq_default_user }}">>},
+    {default_pass, <<"{{ rabbitmq_default_pass }}">>}
+  ]}
+{% if rabbitmq_config_kernel_variables %},
+  {kernel, [
+    {% for key,value in rabbitmq_config_kernel_variables|dictsort %}
+    {% if loop.last -%}
+    { {{- key }}, {{ value -}} }
+    {% else -%}
+    { {{- key }}, {{ value -}} },
+    {% endif -%}
+    {% endfor %}
+  ]}
+{% endif %}
+{% if rabbitmq_admin_enable or rabbitmq_config_management_variables %},
+  {rabbitmq_management, [
+    {% if rabbitmq_config_management_variables %}
+    {% for key,value in rabbitmq_config_management_variables|dictsort %}
+    {% if loop.last %}
+    { {{- key }}, {{ value -}} }
+    {% else %}
+    { {{- key }}, {{ value -}} },
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+{% if rabbitmq_admin_enable %}
+{% if  rabbitmq_config_management_variables -%},{%- endif -%}
+    {listener, [
+{% if rabbitmq_ssl and rabbitmq_management_ssl -%}
+      {port, {{ rabbitmq_ssl_management_port -}} },
+      {ssl, true},
+      {ssl_opts, [
+                  {% if rabbitmq_ssl_cacert|default(false) -%}
+                  {cacertfile, "{{ rabbitmq_ssl_cacert }}"},
+                  {% endif -%}
+                  {certfile, "{{ rabbitmq_ssl_cert }}"},
+                  {keyfile, "{{ rabbitmq_ssl_key }}"}
+                  {%- if rabbitmq_ssl_versions -%}
+                  ,
+                  {versions, ['{{ rabbitmq_ssl_versions|join("', '") }}']}
+                  {%- endif -%}
+                  {% if rabbitmq_ssl_ciphers -%}
+                  ,
+                  {ciphers,[
+                      { {{- rabbitmq_ssl_ciphers|join("},\n                      {") -}} }
+                    ]}
+                  {% endif -%}
+                 ]}
+{% else %}
+      {port, {{ rabbitmq_management_port -}} }
+{% endif %}
+{% if rabbitmq_node_ip_address|default(false) %}
+      ,{ip, "{{ rabbitmq_node_ip_address }}"}
+{% endif %}
+    ]}
+{% endif %}
+  ]}
+{% endif %}
+{% if rabbitmq_config_stomp %},
+% Configure the Stomp Plugin listening port
+  {rabbitmq_stomp, [
+  {% if rabbitmq_stomp_ssl_only -%}
+  {tcp_listeners, []}
+  {%- else %}
+  {tcp_listeners, [{{ rabbitmq_stomp_port }}]}
+  {%- endif -%}
+  {% if rabbitmq_ssl and rabbitmq_ssl_stomp_port -%}
+    ,
+    {ssl_listeners, [{{ rabbitmq_ssl_stomp_port }}]}
+  {% endif %}
+  ]}
+{% endif %}
+{% if rabbitmq_ldap_auth %},
+% Configure the LDAP authentication plugin
+  {rabbitmq_auth_backend_ldap, [
+    {other_bind, {{ rabbitmq_ldap_other_bind -}} },
+    {servers, ["{{ rabbitmq_ldap_server }}"]},
+    {user_dn_pattern, "{{ rabbitmq_ldap_user_dn_pattern }}"},
+    {use_ssl, {{ rabbitmq_ldap_use_ssl|bool|lower -}} },
+    {port, {{ rabbitmq_ldap_port -}} },
+{% if rabbitmq_ldap_config_variables %}
+{% for key,value in rabbitmq_ldap_config_variables|dictsort %}
+    { {{- key }}, {{ value -}} },
+{% endfor %}
+{% endif %}
+    {log, {{ rabbitmq_ldap_log -}} }
+  ]}
+{% endif %}
+{% if rabbitmq_config_shovel and rabbitmq_config_shovel_statics %},
+  {rabbitmq_shovel,
+    [{shovels,[
+      {% for key,value in rabbitmq_config_shovel_statics|dictsort -%}
+      {% if loop.last -%}
+      { {{- key }}, {{ value -}} }
+      {% else -%}
+      { {{- key }}, {{ value -}} },
+      {% endif -%}
+      {% endfor %}
+    ]}]}
+{% endif %}
+{% if rabbitmq_config_additional_variables|default(false) %},
+% Additional config
+{% for key,value in rabbitmq_config_additional_variables|dictsort %}
+{% if loop.last %}
+{ {{- key }}, {{ value -}} }
+{% else %}
+{ {{- key }}, {{ value -}} },
+{% endif %}
+{% endfor %}
+{% endif %}
+].
+% EOF

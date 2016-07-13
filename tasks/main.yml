@@ -1,0 +1,10 @@
+---
+
+- name: RabbitMQ Install
+  include: "install-{{ ansible_os_family|lower }}.yml"
+
+- name: RabbitMQ Configure
+  include: config.yml
+
+- name: Start rabbitmq-server
+  service: name=rabbitmq-server enabled=yes state=started

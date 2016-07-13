@@ -1,0 +1,8 @@
+---
+- name: RabbitMQ play
+  hosts: test-kitchen
+
+  vars:
+
+  roles:
+    - ansible-rabbitmq
