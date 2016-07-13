@@ -10,7 +10,7 @@ Ansible role to install and configure RabbitMQ.
 - hosts: myhost
 
   vars:
-    rabbitmq_version: 3.0.4
+    rabbitmq_version: 3.6.3-1
     
   roles:
     - wunzeco.rabbitmq
