@@ -5,7 +5,7 @@ rabbitmq_group: "{{ rabbitmq_user }}"
 
 #############
 ## Package
-rabbitmq_version:           '3.6.3-1'
+rabbitmq_version:           '3.6.4-1'
 rabbitmq_signing_key_url:   "https://www.rabbitmq.com/rabbitmq-release-signing-key.asc"
 rabbitmq_apt_repo:          "deb http://www.rabbitmq.com/debian/ testing main"
 rabbitmq_yum_repo_baseurl:  "http://www.rabbitmq.com/releases/rabbitmq-server/v{{ rabbitmq_version.split('-')[0] }}"
@@ -18,6 +18,8 @@ rabbitmq_home_dir:     /var/lib/rabbitmq
 rabbitmq_conf_dir:     /etc/rabbitmq
 rabbitmq_plugins_dir:  "/usr/lib/rabbitmq/lib/rabbitmq_server-{{ rabbitmq_version.split('-')[0] }}/plugins"
 rabbitmq_conf_file:    "{{ rabbitmq_conf_dir }}/rabbitmq.config"
+rabbitmq_plugins_enable:  []
+rabbitmq_plugins_disable: []
 
 rabbitmq_max_open_files: 16384
 

@@ -1,0 +1,19 @@
+---
+
+- name: Get list of enabled rabbitmq plugins
+  shell: >
+      rabbitmq-plugins list -e | grep ']' | awk '{print $2}'
+  register: plugins
+
+- debug: var=plugins
+
+- name: Enable rabbitmq plugin
+  shell: >
+      rabbitmq-plugins enable {{ item }}
+  with_items: "{{ rabbitmq_plugins_enable }}"
+  when: not item in plugins.stdout_lines
+
+- name: Disable rabbitmq plugin
+  shell: >
+      rabbitmq-plugins disable {{ item }}
+  with_items: "{{ rabbitmq_plugins_disable }}"

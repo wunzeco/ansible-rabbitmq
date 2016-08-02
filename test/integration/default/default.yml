@@ -3,6 +3,8 @@
   hosts: test-kitchen
 
   vars:
+    rabbitmq_plugins_enable:  [ rabbitmq_management, cowboy ]
+    rabbitmq_plugins_disable: [ cowboy ]
 
   roles:
     - ansible-rabbitmq

@@ -45,3 +45,9 @@ end
 describe service('rabbitmq-server') do
   it { should be_running }
 end
+
+describe command('rabbitmq-plugins list -e | grep "]" | awk "{print $2}"') do
+  its(:exit_status) { should eq 0 }
+  its(:stdout) { should match %r/rabbitmq_management/ }
+  its(:stdout) { should_not match %r/cowboy/ }
+end

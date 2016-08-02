@@ -8,3 +8,6 @@
 
 - name: Start rabbitmq-server
   service: name=rabbitmq-server enabled=yes state=started
+
+- name: RabbitMQ Plugins
+  include: plugins.yml
