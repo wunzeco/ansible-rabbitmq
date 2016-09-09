@@ -1,0 +1,35 @@
+---
+
+- name: Create rabbitmq admin user
+  rabbitmq_user:
+    user:           "{{ rabbitmq_admin_user }}"
+    password:       "{{ rabbitmq_admin_password|default(omit) }}"
+    vhost:          "/"
+    read_priv:      ".*"
+    write_priv:     ".*"
+    configure_priv: ".*"
+    tags:           "administrator"
+    state:          present
+  when: rabbitmq_admin_user|default(false)
+
+- name: Create rabbitmq users
+  rabbitmq_user:
+    user:           "{{ item.user }}"
+    password:       "{{ item.password }}"
+    permissions:    "{{ item.permissions|default(omit) }}"
+    tags:           "{{ item.tags|default(omit)|join(',') }}"
+    force:          "{{ item.force|default(omit) }}"
+    state:          present
+  with_items: "{{ rabbitmq_users_add|default([]) }}"
+
+- name: Delete rabbitmq users
+  rabbitmq_user:
+    user:   "{{ item }}"
+    state:  absent
+  with_items: "{{ rabbitmq_users_delete|default([]) }}"
+
+- name: Delete rabbitmq guest user
+  rabbitmq_user:
+    user:   guest
+    state:  absent
+  when: rabbitmq_delete_guest_user and rabbitmq_admin_user != 'guest'

@@ -5,10 +5,34 @@ rabbitmq_group: "{{ rabbitmq_user }}"
 
 #############
 ## Package
-rabbitmq_version:           '3.6.4-1'
+rabbitmq_version:           '3.6.5-1'
 rabbitmq_signing_key_url:   "https://www.rabbitmq.com/rabbitmq-release-signing-key.asc"
 rabbitmq_apt_repo:          "deb http://www.rabbitmq.com/debian/ testing main"
 rabbitmq_yum_repo_baseurl:  "http://www.rabbitmq.com/releases/rabbitmq-server/v{{ rabbitmq_version.split('-')[0] }}"
+
+
+#################
+## Vhosts & Users
+rabbitmq_delete_guest_user: false
+rabbitmq_admin_user:
+rabbitmq_admin_password:
+
+rabbitmq_vhosts_add:     []       # List of vhosts to add. E.g. [ '/one', '/two' ]
+rabbitmq_vhosts_delete:  []       # List of vhosts to delete. E.g. [ '/cat', '/dog' ]
+
+rabbitmq_users_add:     []        # List of user dicts to add. See user config example below
+rabbitmq_users_delete:  []        # List of user names to delete. See user config example below
+
+## User config example
+##--------------------
+## rabbitmq_users_add:
+##   - user: ogonna
+##     password: ogonnaPass
+##     force: false                # Must specify force=true to change password of existing user
+##     permissions: 
+##       - { vhost: /one, read_priv: '.*', write_priv: '.*', configure_priv: '.*' }
+## rabbitmq_users_delete:  [ john, doe ]
+
 
 #################
 ## Configuration
@@ -33,9 +57,8 @@ rabbitmq_config_cluster:                false
 rabbitmq_config_stomp:                  false
 rabbitmq_config_shovel:                 false
 rabbitmq_config_shovel_statics:         {}
-rabbitmq_default_user:                  'guest'
-rabbitmq_default_pass:                  'guest'
-rabbitmq_delete_guest_user:             false
+rabbitmq_default_user:                  "{{ rabbitmq_admin_user|default('guest') }}"
+rabbitmq_default_pass:                  "{{ rabbitmq_admin_password|default('guest') }}"
 rabbitmq_erlang_cookie:                 
 rabbitmq_interface:                     
 rabbitmq_node_ip_address:               

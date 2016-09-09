@@ -11,3 +11,9 @@
 
 - name: RabbitMQ Plugins
   include: plugins.yml
+
+- name: RabbitMQ Vhosts
+  include: vhosts.yml
+
+- name: RabbitMQ Users
+  include: users.yml

@@ -5,6 +5,22 @@
   vars:
     rabbitmq_plugins_enable:  [ rabbitmq_management, cowboy ]
     rabbitmq_plugins_disable: [ cowboy ]
+    rabbitmq_vhosts_add:    [ "/one", "/two", "/cat" ]
+    rabbitmq_vhosts_delete: [ "/cat", "/dog" ]
+    rabbitmq_users_add:
+      - user: chika
+        password: chikaPass
+      - user: ogonna
+        password: ogonnaPass
+        permissions: 
+          - { vhost: /one, read_priv: '.*', write_priv: '.*', configure_priv: '.*' }
+          - { vhost: /two, read_priv: '.*', write_priv: '.*', configure_priv: '^$' }
+      - user: john
+        password: johnPass
+    rabbitmq_users_delete: [ john, doe ]
+    rabbitmq_admin_user: adminuser
+    rabbitmq_admin_password: rabbitMQAdmin
+    rabbitmq_delete_guest_user: true
 
   roles:
     - ansible-rabbitmq

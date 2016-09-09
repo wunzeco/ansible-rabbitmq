@@ -51,3 +51,21 @@ describe command('rabbitmq-plugins list -e | grep "]" | awk "{print $2}"') do
   its(:stdout) { should match %r/rabbitmq_management/ }
   its(:stdout) { should_not match %r/cowboy/ }
 end
+
+describe command('rabbitmqctl list_vhosts | awk "{print $1}"') do
+  its(:exit_status) { should eq 0 }
+  its(:stdout) { should match %r/one/ }
+  its(:stdout) { should_not match %r/cat/ }
+end
+
+describe command('rabbitmqctl list_users | awk "{print $1}"') do
+  its(:exit_status) { should eq 0 }
+  its(:stdout) { should match %r/ogonna/ }
+  its(:stdout) { should match %r/adminuser/ }
+  its(:stdout) { should_not match %r/john/ }
+end
+
+describe command('rabbitmqctl list_user_permissions ogonna | awk "{print $1}"') do
+  its(:exit_status) { should eq 0 }
+  its(:stdout) { should match %r/\.\*\s+\.\*\s+\.\*/ }
+end

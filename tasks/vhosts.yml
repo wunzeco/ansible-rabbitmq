@@ -1,0 +1,17 @@
+---
+
+- name: Create rabbitmq vhosts
+  rabbitmq_vhost:
+    name:    "{{ item }}"
+    node:    rabbit
+    tracing: no
+    state:   present
+  with_items: "{{ rabbitmq_vhosts_add|default([]) }}"
+
+- name: Delete rabbitmq vhosts
+  rabbitmq_vhost:
+    name:    "{{ item }}"
+    node:    rabbit
+    tracing: no
+    state:   absent
+  with_items: "{{ rabbitmq_vhosts_delete|default([]) }}"
