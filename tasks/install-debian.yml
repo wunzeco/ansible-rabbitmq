@@ -1,16 +1,5 @@
 ---
 
-- name: Download and install rabbitmq public signing key
-  apt_key:
-    url:   "{{ rabbitmq_signing_key_url }}"
-    state: present
-
-- name: Add rabbitmq apt repository definition to apt sources list
-  apt_repository: 
-    repo:         "{{ rabbitmq_apt_repo }}"
-    update_cache: yes
-    state:        present
-
 - name: Install erlang-nox
   apt:
     name:   erlang-nox
@@ -18,5 +7,5 @@
   
 - name: Install rabbitmq-server
   apt:
-    name:  "rabbitmq-server={{ rabbitmq_version|default('*') }}"
+    deb:   "{{ rabbitmq_deb_pkg_url }}"
     state: present
