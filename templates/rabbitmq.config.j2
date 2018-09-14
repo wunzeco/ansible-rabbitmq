@@ -13,7 +13,7 @@
     {auth_backends, [rabbit_auth_backend_internal, rabbit_auth_backend_ldap]},
 {% endif %}
 {% if rabbitmq_config_cluster %}
-    {cluster_nodes, {[rabbit@{{ rabbitmq_cluster_nodes|join(', rabbit@') }}], {{ rabbitmq_cluster_node_type -}} }},
+    {cluster_nodes, {['rabbit@{{ rabbitmq_cluster_nodes|join("', 'rabbit@") }}'], {{ rabbitmq_cluster_node_type -}} }},
     {cluster_partition_handling, {{ rabbitmq_cluster_partition_handling -}} },
 {% endif %}
     {tcp_listen_options,

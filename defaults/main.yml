@@ -5,11 +5,11 @@ rabbitmq_group: "{{ rabbitmq_user }}"
 
 #############
 ## Package
-rabbitmq_version:           '3.6.6-1'
+rabbitmq_version:           '3.7.7-1'
 rabbitmq_signing_key_url:   "https://www.rabbitmq.com/rabbitmq-release-signing-key.asc"
 rabbitmq_deb_pkg:           "rabbitmq-server_{{ rabbitmq_version }}_all.deb"
 rabbitmq_deb_pkg_url: "https://www.rabbitmq.com/releases/rabbitmq-server/v{{ rabbitmq_version.split('-')[0] }}/{{ rabbitmq_deb_pkg }}"
-rabbitmq_yum_repo_baseurl:  "http://www.rabbitmq.com/releases/rabbitmq-server/v{{ rabbitmq_version.split('-')[0] }}"
+rabbitmq_yum_repo_baseurl:  "https://github.com/rabbitmq/rabbitmq-server/releases/download/v{{ rabbitmq_version.split('-')[0] }}"
 
 
 #################
